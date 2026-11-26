@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLUS - Pantau Lajur Uang Santri</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="full-screen-bg">
+    <header class="login-navbar">
+        <div class="nav-left">
+            <img src="sangat positip.png" alt="logo" class="logo-left" onerror="this.style.display='none'">
+            <div class="nav-brand-text"><span>Pantau Lajur</span><span>Uang Santri</span></div>
+        </div>
+        <div class="nav-right">
+            <button class="icon-btn-dark" onclick="toggleTheme()" title="Ganti Tema">
+                <i class="theme-icon fa-solid fa-moon"></i>
+            </button>
+            <span>Petugas</span>
+            <i class="fa-solid fa-bars"></i>
+        </div>
+    </header>
+    <div class="login-wrapper">
+        <div class="nav-center">
+            <img src="ALFALAH-1.png" alt="logo" class="logo-center" onerror="this.style.display='none'">
+        </div>
+        <form class="login-form-box" onsubmit="event.preventDefault(); prosesLogin();">
+    <div class="input-pill">
+        <i class="fa-regular fa-envelope"></i>
+        <input type="email" id="login-username" placeholder="Email admin" required>
+    </div>
+    <div class="input-pill">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="login-password" placeholder="Password" required>
+    </div>
+    <p id="login-error" class="hidden" style="color:#ef4444;text-align:center;font-weight:bold;margin-bottom:10px;"></p>
+    <button type="submit" class="btn-blue-pill">Masuk Aplikasi</button>
+    <p style="text-align:center;font-size:13px;color:#64748b;margin-top:14px;">
+        Belum punya akun? <a href="register.html" style="color:#10b981;font-weight:bold;text-decoration:none;">Daftar Pondok Baru</a>
+    </p>
+</form>
+<form class="login-form-box" onsubmit="event.preventDefault(); prosesLogin();">
+    <div class="input-pill">
+        <i class="fa-regular fa-envelope"></i>
+        <input type="email" id="login-username" placeholder="Email admin" required>
+    </div>
+    <div class="input-pill">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="login-password" placeholder="Password" required>
+    </div>
+    <p id="login-error" class="hidden" style="color:#ef4444;text-align:center;font-weight:bold;margin-bottom:10px;"></p>
+    <button type="submit" class="btn-blue-pill">Masuk Aplikasi</button>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="main-screen" class="dashboard-wrapper hidden">
+
+    <header class="top-navbar">
+        <div class="navbar-brand">
+            <div class="brand-logo">PLUS</div>
+            <div class="brand-text"><span class="brand-title">Pondok Pesantren</span><span class="brand-subtitle">Al-Falah</span></div>
+        </div>
+        <div class="navbar-stats">
+            <div class="stat-pill"><span class="stat-pill-label">TOTAL SALDO</span><span class="stat-pill-value" id="top-total-saldo">Rp 0</span></div>
+            <div class="stat-pill"><span class="stat-pill-label">TOTAL SANTRI</span><span class="stat-pill-value" id="top-total-santri">0 Santri</span></div>
+            <div class="stat-pill"><span class="stat-pill-label">KAMAR</span><span class="stat-pill-value" id="top-total-kamar">0 Unit</span></div>
+        </div>
+        <div class="navbar-user">
+            <img src="fotoku.JPG" alt="Profile" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Admin&background=10b981&color=fff'">
+            <div class="user-details"><span class="user-name" id="info-user">Super Admin</span><span class="user-role">Admin</span></div>
+            <button class="icon-btn" onclick="toggleTheme()" title="Ganti Tema"><i class="theme-icon fa-solid fa-moon"></i></button>
+            <button class="btn-yellow-small" onclick="bukaPengaturan()"><i class="fa-solid fa-cog"></i> Pengaturan</button>
+            <button class="icon-btn" onclick="prosesLogout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </header>
+
+    <div class="sub-navbar">
+        <div class="sub-nav-left">
+            <a href="#" class="sub-nav-link active" onclick="bukaMenu('overview', this); return false;"><i class="fa-solid fa-house"></i> Dashboard</a>
+            <span class="sub-nav-sep">/</span>
+            <a href="#" class="sub-nav-link" onclick="bukaMenu('riwayat', this); return false;">Mutasi Setor / Tarik</a>
+        </div>
+        <div class="sub-nav-right">
+            <button class="sub-btn sub-btn-green" onclick="bukaModalBulk('SETOR')"><i class="fa-solid fa-arrow-down"></i> Setor Uang</button>
+            <button class="sub-btn sub-btn-red" onclick="bukaModalBulk('TARIK')"><i class="fa-solid fa-arrow-up"></i> Tarik Uang</button>
+            <button class="sub-btn sub-btn-yellow" onclick="bukaModalBulk('TARIK')"><i class="fa-solid fa-layer-group"></i> Tarik Masal</button>
+            <button class="sub-btn sub-btn-green" onclick="tambahSantriManual()"><i class="fa-solid fa-plus"></i> Santri</button>
+        </div>
+    </div>
+
+    <div class="info-banner">
+        <div class="info-banner-left">
+            <div class="info-banner-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="info-banner-text">
+                <strong>Hak Akses Penuh: super (Super Admin)</strong>
+                <span class="badge-access">AKSES TERTINGGI</span>
+                <p>Anda berwenang mengelola keuangan santri, menghapus santri, serta mengelola akun pengguna.</p>
+            </div>
+        </div>
+        <div class="info-banner-right">
+            <button class="btn-outline-yellow" onclick="bukaPengaturan()">Pengaturan Keamanan & Admin</button>
+            <button class="btn-green-solid" onclick="cetakMasal()">Cetak Masal</button>
+            <button class="btn-yellow-solid" onclick="tambahSantriManual()">+ Tambah Santri</button>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="dashboard-header-card">
+            <div class="dashboard-header-top">
+                <div>
+                    <h1>Dashboard Pemantauan Lajur Uang Santri (PLUS)</h1>
+                    <p class="dashboard-subtitle">Rekapitulasi saldo dan jumlah santri berdasarkan kamar.</p>
+                </div>
+                <div class="dashboard-header-actions">
+                    <button class="btn-yellow-small"><i class="fa-solid fa-pen-to-square"></i> Atur Kamar</button>
+                    <select class="btn-select" id="header-filter-kamar" onchange="syncFilterKamar(this.value)">
+                        <option value="ALL">Semua Kamar</option>
+                    </select>
+                    <button class="btn-green-solid" onclick="tambahSantriManual()">+ Santri</button>
+                </div>
+            </div>
+            <div class="kamar-stats-grid" id="kamar-stats-grid"></div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-card-header">
+                <div class="chart-title-wrap">
+                    <div class="chart-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div>
+                        <h2>Grafik Tren Saldo &amp; Mutasi Uang Santri</h2>
+                        <span class="chart-badge">VISUALISASI REALTIME</span>
+                    </div>
+                </div>
+                <div class="chart-buttons">
+                    <button class="chart-btn active" data-mode="mutasi" onclick="setChartMode('mutasi', this)">Mutasi Per Bulan</button>
+                    <button class="chart-btn" data-mode="saldo" onclick="setChartMode('saldo', this)">Tren Saldo Total</button>
+                    <select class="chart-select" id="chart-period" onchange="renderChart()">
+                        <option value="all">Semua Periode</option>
+                        <option value="6m">6 Bulan Terakhir</option>
+                        <option value="3m">3 Bulan Terakhir</option>
+                        <option value="1m">Bulan Ini</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-summary">
+                <div class="chart-summary-item"><span class="dot dot-green"></span><span class="label">Akumulasi Total Setoran:</span><strong class="value-green" id="chart-total-setor">Rp 0</strong></div>
+                <div class="chart-summary-item"><span class="dot dot-red"></span><span class="label">Akumulasi Total Tarik:</span><strong class="value-red" id="chart-total-tarik">Rp 0</strong></div>
+                <div class="chart-summary-item"><span class="dot dot-yellow"></span><span class="label">Saldo Keseluruhan Akhir:</span><strong class="value-yellow" id="chart-total-saldo">Rp 0</strong></div>
+            </div>
+            <div class="chart-container"><canvas id="trendChart"></canvas></div>
+        </div>
+
+        <div class="search-bar">
+            <div class="search-input-wrap">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="search-input" placeholder="Cari santri berdasarkan nama lengkap, panggilan, ID, atau kamar..." oninput="renderTampilan()">
+            </div>
+            <select id="filter-kamar" class="filter-select" onchange="syncFilterKamar(this.value)">
+                <option value="ALL">Kamar: Semua Kamar</option>
+            </select>
+            <button class="icon-btn-square"><i class="fa-solid fa-filter"></i></button>
+            <button class="icon-btn-square"><i class="fa-solid fa-sort"></i></button>
+        </div>
+
+        <div class="bulk-bar">
+            <label class="bulk-check">
+                <input type="checkbox" id="select-all" onchange="toggleSelectAll()">
+                <span>Pilih Semua (<span id="selected-count">0</span> santri)</span>
+            </label>
+            <div class="bulk-actions">
+                <button class="btn-green-solid btn-sm" onclick="bukaModalBulk('SETOR')"><i class="fa-solid fa-arrow-down"></i> Setor Masal</button>
+                <button class="btn-red-solid btn-sm" onclick="bukaModalBulk('TARIK')"><i class="fa-solid fa-arrow-up"></i> Tarik Masal</button>
+            </div>
+        </div>
+
+        <div id="daftar-santri" class="santri-grid"></div>
+        <div id="riwayat-area" class="riwayat-area hidden"></div>
+    </main>
+</div>
+
+<!-- BOTTOM NAV (MOBILE) -->
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <a href="#" class="mbn-item active" onclick="bukaMenu('overview', this); return false;"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+    <a href="#" class="mbn-item" onclick="bukaMenu('riwayat', this); return false;"><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat</span></a>
+    <a href="#" class="mbn-item mbn-add" onclick="tambahSantriManual(); return false;"><i class="fa-solid fa-plus"></i></a>
+    <a href="#" class="mbn-item" onclick="bukaModalBulk('SETOR'); return false;"><i class="fa-solid fa-arrow-down"></i><span>Setor</span></a>
+    <a href="#" class="mbn-item" onclick="bukaPengaturan(); return false;"><i class="fa-solid fa-cog"></i><span>Akun</span></a>
+</nav>
+
+<!-- MODAL: TRANSAKSI -->
+<div id="modal-transaksi" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div id="modal-header" class="modal-header">Proses Transaksi</div>
+        <div class="modal-body">
+            <div class="form-group"><label>Nama Santri</label><div id="modal-nama" class="modal-nama">-</div></div>
+            <div class="form-group"><label>Nominal (Rp)</label><input type="number" id="input-nominal" class="input-nominal" placeholder="Contoh: 50000"></div>
+            <div class="form-group"><label>Keterangan (Opsional)</label><input type="text" id="input-keterangan" class="input-nominal" placeholder="Contoh: Jajan / SPP"></div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="tutupModal()" class="btn-batal">Batal</button>
+            <button onclick="prosesTransaksi()" class="btn-simpan">Simpan Transaksi</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: BULK -->
+<div id="modal-bulk" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div id="modal-bulk-header" class="modal-header">Setor Masal</div>
+        <div class="modal-body">
+            <div class="form-group"><label>Santri Terpilih</label><div id="modal-bulk-count" class="modal-nama">0 santri</div></div>
+            <div class="form-group"><label>Nominal per Santri (Rp)</label><input type="number" id="input-nominal-bulk" class="input-nominal" placeholder="Contoh: 50000" oninput="updateBulkPreview()"></div>
+            <div class="form-group"><label>Keterangan (Opsional)</label><input type="text" id="input-keterangan-bulk" class="input-nominal" placeholder="Contoh: Setoran bulanan"></div>
+            <div id="modal-bulk-preview" class="bulk-preview"></div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="tutupModalBulk()" class="btn-batal">Batal</button>
+            <button onclick="prosesTransaksiBulk()" class="btn-simpan">Proses Semua</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: PENGATURAN -->
+<div id="modal-pengaturan" class="modal-overlay hidden">
+    <div class="modal-box modal-wide">
+        <div class="modal-header">
+            <i class="fa-solid fa-cog"></i> Pengaturan
+            <button class="modal-close-btn" onclick="tutupPengaturan()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-tabs">
+            <button class="modal-tab active" data-tab="password" onclick="switchTab('password', this)"><i class="fa-solid fa-key"></i> Password</button>
+            <button class="modal-tab" data-tab="petugas" onclick="switchTab('petugas', this)"><i class="fa-solid fa-users"></i> Petugas</button>
+            <button class="modal-tab" data-tab="data" onclick="switchTab('data', this)"><i class="fa-solid fa-database"></i> Backup & Restore</button>
+        </div>
+
+        <div id="tab-password" class="modal-tab-content">
+            <div class="modal-body">
+                <div class="form-group"><label>Password Lama</label><input type="password" id="input-old-password" class="input-nominal"></div>
+                <div class="form-group"><label>Password Baru</label><input type="password" id="input-new-password" class="input-nominal"></div>
+                <div class="form-group"><label>Konfirmasi Password Baru</label><input type="password" id="input-confirm-password" class="input-nominal"></div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="tutupPengaturan()" class="btn-batal">Batal</button>
+                <button onclick="prosesGantiPassword()" class="btn-simpan">Simpan Password</button>
+            </div>
+        </div>
+
+        <div id="tab-petugas" class="modal-tab-content hidden">
+    <div class="modal-body">
+        <div class="petugas-form">
+            <select id="petugas-role" class="input-nominal" style="grid-column:1/-1;">
+                <option value="petugas">Petugas Biasa</option>
+                <option value="super_admin">Super Admin (akses penuh)</option>
+            </select>
+            <button class="btn-simpan" onclick="tambahPetugas()" style="grid-column:1/-1;">
+                <i class="fa-solid fa-ticket"></i> Buat Kode Undangan
+            </button>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:10px;background:var(--bg-subtle);border-radius:8px;">
+            💡 Bagikan kode ke calon petugas. Mereka buka halaman Register, pilih "Gabung Kode Undangan", isi data, dan masukkan kode.
+        </p>
+        <div id="petugas-list" class="petugas-list"></div>
+    </div>
+</div>
+
+        <div id="tab-data" class="modal-tab-content hidden">
+            <div class="modal-body">
+                <div class="data-action-card">
+                    <div>
+                        <strong><i class="fa-solid fa-download"></i> Backup Data</strong>
+                        <p>Download semua data (santri, riwayat, akun) dalam file JSON.</p>
+                    </div>
+                    <button class="btn-green-solid" onclick="backupData()">Backup</button>
+                </div>
+                <div class="data-action-card">
+                    <div>
+                        <strong><i class="fa-solid fa-upload"></i> Restore Full Backup</strong>
+                        <p>Upload file backup JSON. Data saat ini akan DIGANTIKAN seluruhnya.</p>
+                    </div>
+                    <label for="file-restore" class="btn-yellow-solid" style="cursor:pointer;">Pilih File</label>
+                    <input type="file" id="file-restore" accept=".json" style="display:none;">
+                </div>
+                <div class="data-action-card">
+                    <div>
+                        <strong><i class="fa-solid fa-file-import"></i> Import Santri Saja (JSON)</strong>
+                        <p>Import daftar santri dari JSON tanpa mengubah riwayat mutasi.</p>
+                    </div>
+                    <label for="file-import-santri" class="btn-green-solid" style="cursor:pointer;">Pilih File</label>
+                    <input type="file" id="file-import-santri" accept=".json" style="display:none;">
+                </div>
+                <div class="data-action-card danger-zone">
+                    <div>
+                        <strong><i class="fa-solid fa-triangle-exclamation"></i> Reset Semua Data</strong>
+                        <p>Hapus seluruh santri & riwayat. Tidak bisa dibatalkan.</p>
+                    </div>
+                    <button class="btn-red-solid" onclick="resetSemuaData()">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: QR KARTU -->
+<div id="modal-qr" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-header">
+            <i class="fa-solid fa-qrcode"></i> Kartu Digital Santri
+            <button class="modal-close-btn" onclick="tutupQR()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body" style="align-items:center;text-align:center;">
+            <div id="qr-canvas-container">
+                <img id="qr-image" src="" alt="QR Code" style="width:240px;height:240px;display:none;">
+                <div id="qr-loading" style="color:var(--text-muted);font-size:12px;">Memuat QR...</div>
+            </div>
+            <div id="qr-info" style="margin-top:8px;"></div>
+            <div style="display:flex;gap:8px;width:100%;margin-top:8px;">
+                <button class="btn-green-solid" onclick="downloadQR()" style="flex:1;"><i class="fa-solid fa-download"></i> Download</button>
+                <button class="btn-yellow-solid" onclick="cetakKartuQR()" style="flex:1;"><i class="fa-solid fa-print"></i> Cetak</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container" class="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
